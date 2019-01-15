@@ -1,8 +1,10 @@
 "use strict";
 var Pong = (function () {
     function Pong(width, height) {
+        var _this = this;
         this.height = height;
         this.width = width;
+        this.score = [0, 0];
         this.canvas = document.createElement('canvas');
         this.ctx = this.canvas.getContext('2d');
         this.canvas.style.backgroundColor = '#111';
@@ -13,6 +15,21 @@ var Pong = (function () {
         this.ball.vel = new Vector2d(3, 3);
         this.playerA = new Rect(new Vector2d(30, height / 2), new Vector2d(20, 200));
         this.playerB = new Rect(new Vector2d(width - 30, height / 2), new Vector2d(20, 200));
+        document.addEventListener('keypress', function (evt) {
+            var pressedKey = evt.keyCode;
+            if (pressedKey == keys.UP) {
+                _this.playerA.vel.y = -2;
+            }
+            if (pressedKey == keys.DOWN) {
+                _this.playerA.vel.y = 2;
+            }
+        });
+        document.addEventListener('keyup', function () {
+            _this.playerA.vel.y = 0;
+        });
+        document.addEventListener('mousemove', function (evt) {
+            _this.playerB.pos.y = evt.clientY;
+        });
     }
     Pong.prototype.draw = function () {
         var _this = this;
@@ -26,8 +43,6 @@ var Pong = (function () {
         var _this = this;
         if (this.ball.top < 0 || this.ball.bottom > this.height)
             this.ball.vel.y *= -1;
-        if (this.ball.left < 0 || this.ball.right > this.width)
-            this.ball.vel.x *= -1;
         if (this.ball.horizontalCollide(this.playerA)
             || this.ball.horizontalCollide(this.playerB)) {
             this.ball.vel.x *= -1;
@@ -35,6 +50,16 @@ var Pong = (function () {
         if (this.ball.verticalCollide(this.playerA)
             || this.ball.verticalCollide(this.playerB)) {
             this.ball.vel.y *= -1;
+        }
+        if (this.ball.left < 0 || this.ball.right > this.width) {
+            if (this.ball.right > this.width) {
+                this.score[0]++;
+            }
+            else {
+                this.score[1]++;
+            }
+            this.ball.pos = new Vector2d(this.width / 2, this.height / 2);
+            console.log(this.score);
         }
         var updateables = new Array(this.ball, this.playerA, this.playerB);
         updateables.forEach(function (obj) {
@@ -120,5 +145,10 @@ var Vector2d = (function () {
 Vector2d.prototype.toString = function () {
     return "(" + this.x + ", " + this.y + ")";
 };
+var keys;
+(function (keys) {
+    keys[keys["UP"] = 38] = "UP";
+    keys[keys["DOWN"] = 40] = "DOWN";
+})(keys || (keys = {}));
 var pong = new Pong(1000, 500);
 pong.start();

@@ -1,9 +1,10 @@
 class Pong {
-    canvas: HTMLCanvasElement;
-    ctx:    CanvasRenderingContext2D;
-    height: number;
-    width:  number;
-    ball: Rect;
+    canvas:  HTMLCanvasElement;
+    ctx:     CanvasRenderingContext2D;
+    height:  number;
+    width:   number;
+    score:   number[];
+    ball:    Rect;
     playerA: Rect;
     playerB: Rect;
 
@@ -11,6 +12,7 @@ class Pong {
         // Init config
         this.height = height;
         this.width = width;
+        this.score = [0,0];
         this.canvas = document.createElement('canvas');
         this.ctx = this.canvas.getContext('2d')!;
 
@@ -36,6 +38,23 @@ class Pong {
             new Vector2d(width - 30, height / 2),
             new Vector2d(20, 200)
         );
+
+        // Setup the controllers
+        document.addEventListener('keypress', evt => {
+            const pressedKey = evt.keyCode;
+            if( pressedKey == keys.UP ) {
+                this.playerA.vel.y = -2;
+            }
+            if( pressedKey == keys.DOWN ) {
+                this.playerA.vel.y = 2;
+            }
+        });
+        document.addEventListener('keyup', () => {
+            this.playerA.vel.y = 0;
+        })
+        document.addEventListener('mousemove', evt => {
+            this.playerB.pos.y = evt.clientY;
+        });
         
     }
 
@@ -63,9 +82,6 @@ class Pong {
         // Collitions
         if(this.ball.top < 0 || this.ball.bottom > this.height)
             this.ball.vel.y *= -1;
-
-        if(this.ball.left < 0 || this.ball.right > this.width)
-            this.ball.vel.x *= -1;
         
         if(
                this.ball.horizontalCollide(this.playerA)
@@ -76,6 +92,17 @@ class Pong {
                this.ball.verticalCollide(this.playerA)
             || this.ball.verticalCollide(this.playerB)
         ) { this.ball.vel.y *= -1; }
+
+        // GOAL
+        if(this.ball.left < 0 || this.ball.right > this.width){
+            if (this.ball.right > this.width) {
+                this.score[0]++;
+            } else {
+                this.score[1]++;
+            }
+            this.ball.pos = new Vector2d(this.width / 2, this.height / 2);
+            console.log(this.score);
+        }
 
         // Update the objects
         const updateables = new Array<drawable>(
