@@ -10,8 +10,26 @@ class Rect implements drawable {
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
-        ctx.fillStyle = 'white';
+        ctx.fillStyle = '#0a0';
         ctx.fillRect(this.left, this.top, this.size.x, this.size.y);
+    }
+
+    update(): void {
+        this.pos = this.pos.add(this.vel);
+    }
+
+    verticalCollide(r: Rect): boolean {
+        return false;
+    }
+
+    horizontalCollide(r: Rect): boolean {
+        if(
+            (this.bottom >= r.top && this.top <= r.bottom) && (
+                (this.right >= r.left && this.left <= r.left)
+             || (this.left <= r.right && this.right >= r.right)
+            )
+        ){ return true; }
+        return false;
     }
 
     get top(): number {
