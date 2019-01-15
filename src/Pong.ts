@@ -27,7 +27,7 @@ class Pong {
             new Vector2d(width / 2, height / 2),
             new Vector2d(20, 20)
         );
-        this.ball.vel = new Vector2d(3, 3);
+        this.ball.vel = new Vector2d(3, -3);
         
         // Create the players
         this.playerA = new Rect(
@@ -62,19 +62,27 @@ class Pong {
     draw(): void {
         this.ctx.clearRect(0,0,this.width, this.height);
 
-        const drawables = new Array<drawable>(
+        // Scores
+        const scoreA = new ScoreBoard().getScore(this.score[0]);
+        const scoreB = new ScoreBoard().getScore(this.score[1]);
+        const axpos = (1/4 * this.canvas.width) - (scoreA.width / 2);
+        const bxpos = (3/4 * this.canvas.width) - (scoreB.width / 2);
+        this.ctx.drawImage(scoreA, axpos, 10);
+        this.ctx.drawImage(scoreB, bxpos, 10);
+
+        // All other stuff
+        new Array<drawable>(
             new Rect(
                 new Vector2d(this.width / 2, this.height / 2),
-                new Vector2d(1, this.height)
+                new Vector2d(2, this.height)
             ),
             this.ball,
             this.playerA,
             this.playerB,
-        );
-
-        drawables.forEach(obj => {
+        ).forEach(obj => {
             obj.draw(this.ctx);
         });
+
     }
 
     // Game Main Loop
@@ -101,16 +109,14 @@ class Pong {
                 this.score[1]++;
             }
             this.ball.pos = new Vector2d(this.width / 2, this.height / 2);
-            console.log(this.score);
         }
 
         // Update the objects
-        const updateables = new Array<drawable>(
+        new Array<drawable>(
             this.ball,
             this.playerA,
             this.playerB
-        );
-        updateables.forEach(obj => {
+        ).forEach(obj => {
             obj.update();
         });
         this.draw();

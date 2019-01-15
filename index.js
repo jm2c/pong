@@ -12,7 +12,7 @@ var Pong = (function () {
         this.canvas.width = width;
         document.body.appendChild(this.canvas);
         this.ball = new Rect(new Vector2d(width / 2, height / 2), new Vector2d(20, 20));
-        this.ball.vel = new Vector2d(3, 3);
+        this.ball.vel = new Vector2d(3, -3);
         this.playerA = new Rect(new Vector2d(30, height / 2), new Vector2d(20, 200));
         this.playerB = new Rect(new Vector2d(width - 30, height / 2), new Vector2d(20, 200));
         document.addEventListener('keypress', function (evt) {
@@ -34,8 +34,13 @@ var Pong = (function () {
     Pong.prototype.draw = function () {
         var _this = this;
         this.ctx.clearRect(0, 0, this.width, this.height);
-        var drawables = new Array(new Rect(new Vector2d(this.width / 2, this.height / 2), new Vector2d(1, this.height)), this.ball, this.playerA, this.playerB);
-        drawables.forEach(function (obj) {
+        var scoreA = new ScoreBoard().getScore(this.score[0]);
+        var scoreB = new ScoreBoard().getScore(this.score[1]);
+        var axpos = (1 / 4 * this.canvas.width) - (scoreA.width / 2);
+        var bxpos = (3 / 4 * this.canvas.width) - (scoreB.width / 2);
+        this.ctx.drawImage(scoreA, axpos, 10);
+        this.ctx.drawImage(scoreB, bxpos, 10);
+        new Array(new Rect(new Vector2d(this.width / 2, this.height / 2), new Vector2d(2, this.height)), this.ball, this.playerA, this.playerB).forEach(function (obj) {
             obj.draw(_this.ctx);
         });
     };
@@ -59,10 +64,8 @@ var Pong = (function () {
                 this.score[1]++;
             }
             this.ball.pos = new Vector2d(this.width / 2, this.height / 2);
-            console.log(this.score);
         }
-        var updateables = new Array(this.ball, this.playerA, this.playerB);
-        updateables.forEach(function (obj) {
+        new Array(this.ball, this.playerA, this.playerB).forEach(function (obj) {
             obj.update();
         });
         this.draw();
@@ -126,6 +129,54 @@ var Rect = (function () {
         configurable: true
     });
     return Rect;
+}());
+var ScoreBoard = (function () {
+    function ScoreBoard() {
+        var px = 10;
+        this.chars = [
+            '111101101101111',
+            '110010010010111',
+            '111001111100111',
+            '111001011001111',
+            '101101111001001',
+            '111100111001111',
+            '111100111101111',
+            '111001011001001',
+            '111101111101111',
+            '111101111001111',
+        ].map(function (s) {
+            var canvas = document.createElement('canvas');
+            var ctx = canvas.getContext('2d');
+            canvas.width = 3 * px;
+            canvas.height = 5 * px;
+            ctx.fillStyle = '#0f0';
+            s.split('').forEach(function (d, i) {
+                if (parseInt(d) == 1) {
+                    ctx.fillRect((i % 3) * px, Math.floor(i / 3) * px, px, px);
+                }
+            });
+            return canvas;
+        });
+    }
+    ScoreBoard.prototype.getScore = function (num) {
+        var _this = this;
+        if (num < 0)
+            return this.chars[0];
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        var length = num.toString().length;
+        var boards = num.toString().split('').map(function (s) {
+            var n = parseInt(s);
+            return _this.chars[n];
+        });
+        canvas.width = boards[0].width * length + (length - 1) * (boards[0].width / 3);
+        canvas.height = boards[0].height;
+        boards.forEach(function (b, i) {
+            ctx.drawImage(boards[i], (boards[i].width + boards[0].width / 3) * i, 0);
+        });
+        return canvas;
+    };
+    return ScoreBoard;
 }());
 var Vector2d = (function () {
     function Vector2d(x, y) {
