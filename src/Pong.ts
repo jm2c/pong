@@ -17,7 +17,7 @@ class Pong {
         this.ctx = this.canvas.getContext('2d')!;
 
         // Prepare the canvas
-        this.canvas.style.backgroundColor = '#111';
+        this.canvas.style.backgroundColor = 'black';
         this.canvas.height = height;
         this.canvas.width = width;
         document.body.appendChild(this.canvas);

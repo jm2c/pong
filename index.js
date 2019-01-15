@@ -7,7 +7,7 @@ var Pong = (function () {
         this.score = [0, 0];
         this.canvas = document.createElement('canvas');
         this.ctx = this.canvas.getContext('2d');
-        this.canvas.style.backgroundColor = '#111';
+        this.canvas.style.backgroundColor = 'black';
         this.canvas.height = height;
         this.canvas.width = width;
         document.body.appendChild(this.canvas);
@@ -84,7 +84,7 @@ var Rect = (function () {
         this.vel = new Vector2d();
     }
     Rect.prototype.draw = function (ctx) {
-        ctx.fillStyle = '#0a0';
+        ctx.fillStyle = 'white';
         ctx.fillRect(this.left, this.top, this.size.x, this.size.y);
     };
     Rect.prototype.update = function () {
@@ -149,7 +149,7 @@ var ScoreBoard = (function () {
             var ctx = canvas.getContext('2d');
             canvas.width = 3 * px;
             canvas.height = 5 * px;
-            ctx.fillStyle = '#0f0';
+            ctx.fillStyle = 'white';
             s.split('').forEach(function (d, i) {
                 if (parseInt(d) == 1) {
                     ctx.fillRect((i % 3) * px, Math.floor(i / 3) * px, px, px);

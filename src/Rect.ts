@@ -10,7 +10,7 @@ class Rect implements drawable {
     }
 
     draw(ctx: CanvasRenderingContext2D): void {
-        ctx.fillStyle = '#0a0';
+        ctx.fillStyle = 'white';
         ctx.fillRect(this.left, this.top, this.size.x, this.size.y);
     }
 

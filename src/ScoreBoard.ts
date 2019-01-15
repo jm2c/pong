@@ -21,7 +21,7 @@ class ScoreBoard {
             const ctx = canvas.getContext('2d')!;
             canvas.width = 3 * px;
             canvas.height = 5 * px;
-            ctx.fillStyle = '#0f0';
+            ctx.fillStyle = 'white';
 
             // Draw in the canvas
             s.split('').forEach( (d, i) => {
